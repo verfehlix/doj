@@ -27,7 +27,7 @@ function init() {
 	//IMAGE LOADING
 	loader
 		.add("blockyFront", "img/blocky/blocky.png")
-        .add("ground", "img/Platform Tileset/grasstop.png")
+        .add("ground", "img/grasstop.png")
 		.load(setup);
 
     //HOOK KEYBOARD EVENTS TO KEY.JS
@@ -36,12 +36,14 @@ function init() {
 
     //PLAYER
     var player;
+    var walls = [];
 
 	//SETUP
 	function setup() {
 
         for (var i = 0; i < 12 * 64; i+=64) {
             var ground = createNewGroundSprite(i,height-64, 64, 64);
+            walls.push(ground);
             stage.addChild(ground);
         }
 
@@ -56,7 +58,7 @@ function init() {
 		//Loop this function at 60 frames per second
 		requestAnimationFrame(gameLoop);
 
-        player.update();
+        player.update(walls);
 
 		//Render the stage to see the animation
 		renderer.render(stage);

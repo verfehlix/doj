@@ -21,11 +21,22 @@ function Player(stage, x, y) {
     this.speed = 5;
 };
 
-Player.prototype.update = function() {
-  if (Key.isDown(Key.UP)) this.moveUp();
-  if (Key.isDown(Key.LEFT)) this.moveLeft();
-  if (Key.isDown(Key.DOWN)) this.moveDown();
-  if (Key.isDown(Key.RIGHT)) this.moveRight();
+Player.prototype.update = function(walls) {
+    //check collision before moving
+    var colliding = false;
+    for (var i = 0; i < walls.length; i++) {
+        if (collides(this.sprite, walls[i])) {
+               colliding = true;
+        }
+    }
+    if(!colliding){
+        if (Key.isDown(Key.UP)) this.moveUp();
+        if (Key.isDown(Key.LEFT)) this.moveLeft();
+        if (Key.isDown(Key.DOWN)) this.moveDown();
+        if (Key.isDown(Key.RIGHT)) this.moveRight();
+    } else {
+        this.sprite.position.y -= 1;
+    }
 };
 
 Player.prototype.moveLeft = function() {
