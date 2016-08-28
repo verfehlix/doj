@@ -3,7 +3,7 @@ window.onload = init;
 function init() {
 	//SETTINGS
 	var width = 768;
-	var height = 1000;
+	var height = 888;
     var center = {
         x: width/2,
         y: height/2
