@@ -23,6 +23,24 @@ class Player {
             x: 0,
             y: 0
         };
+
+        this.contactGroundEvent = false;
+        this.isInAir = true;
+        this.hasDoubleJumped = false;
+
+        var up = keyboard(38);
+
+        up.press = () => {
+            if(!this.isInAir){
+                console.log(10);
+                this.movementVector.y = -10;
+            }
+            if(this.isInAir && !this.hasDoubleJumped){
+                this.hasDoubleJumped = true;
+                this.movementVector.y = -10;
+            }
+        };
+
     }
 
     applyMovementVector() {
@@ -31,7 +49,7 @@ class Player {
     }
 
     applyGravity() {
-        this.movementVector.y = Math.min(this.movementVector.y + 0.05, 5);
+        this.movementVector.y = Math.min(this.movementVector.y + 0.5, 10);
     }
 
     entschleunigen() {
@@ -61,8 +79,13 @@ Player.prototype.update = function(walls) {
 
     if(!bottomColliding){
         this.applyGravity();
-    } else {
+        this.contactGroundEvent = false;
+        this.isInAir = true;
+    } else if(!this.contactGroundEvent){
         this.movementVector.y = 0;
+        this.contactGroundEvent = true;
+        this.isInAir = false;
+        this.hasDoubleJumped = false;
     }
 
     if (Key.isDown(Key.LEFT)) {
@@ -73,10 +96,5 @@ Player.prototype.update = function(walls) {
     } else {
         this.entschleunigen();
     }
-    if (Key.isDown(Key.UP)){
-        this.movementVector.y = -1;
-    }
-
     this.applyMovementVector();
-
 };
