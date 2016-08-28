@@ -9,6 +9,11 @@ class Player {
             front: new PIXI.Sprite(PIXI.loader.resources.blockyFront.texture),
             left: new PIXI.Sprite(PIXI.loader.resources.blockyLeft.texture),
             right: new PIXI.Sprite(PIXI.loader.resources.blockyRight.texture),
+            slideLeft1: new PIXI.Sprite(PIXI.loader.resources.blockySlideLeft1.texture),
+            slideLeft2: new PIXI.Sprite(PIXI.loader.resources.blockySlideLeft2.texture),
+            slideRight1: new PIXI.Sprite(PIXI.loader.resources.blockySlideRight1.texture),
+            slideRight2: new PIXI.Sprite(PIXI.loader.resources.blockySlideRight2.texture),
+
         }
 
         this.switchToSprite(this.sprites.right, x, y);
@@ -19,6 +24,7 @@ class Player {
             y: 0
         };
 
+        this.faceDirection = "right";
         this.contactGroundEvent = false;
         this.isInAir = true;
         this.hasDoubleJumped = false;
@@ -79,9 +85,30 @@ class Player {
     entschleunigen() {
         if(this.movementVector.x > 0){
             this.movementVector.x = Math.max(this.movementVector.x - 0.25, 0);
-        }
-        if(this.movementVector.x < 0){
+            if(!this.isInAir){
+                if(Math.abs(this.movementVector.x) > 3.95){
+                    this.switchToSprite(this.sprites.slideRight1, this.sprite.position.x, this.sprite.position.y);
+                } else {
+                    this.switchToSprite(this.sprites.slideRight2, this.sprite.position.x, this.sprite.position.y);
+                }
+            }
+        } else if(this.movementVector.x < 0){
             this.movementVector.x = Math.min(this.movementVector.x + 0.25, 0);
+            if(!this.isInAir){
+                if(Math.abs(this.movementVector.x) > 3.95){
+                    this.switchToSprite(this.sprites.slideLeft1, this.sprite.position.x, this.sprite.position.y);
+                } else {
+                    this.switchToSprite(this.sprites.slideLeft2, this.sprite.position.x, this.sprite.position.y);
+                }
+            }
+        } else {
+               if(this.faceDirection == "right"){
+                   this.switchToSprite(this.sprites.right, this.sprite.position.x, this.sprite.position.y);
+               }
+               if(this.faceDirection == "left"){
+                   this.switchToSprite(this.sprites.left, this.sprite.position.x, this.sprite.position.y);
+               }
+
         }
     }
 }
@@ -113,11 +140,13 @@ Player.prototype.update = function(walls) {
     }
 
     if (Key.isDown(Key.LEFT)) {
-        this.movementVector.x = Math.max(this.movementVector.x - 0.35, -5);
+        this.movementVector.x = Math.min(Math.max(this.movementVector.x - 0.35, -5),2);
+        this.faceDirection = "left";
         this.switchToSprite(this.sprites.left, this.sprite.position.x, this.sprite.position.y);
     }
     else if (Key.isDown(Key.RIGHT)) {
-        this.movementVector.x = Math.min(this.movementVector.x + 0.35, 5);
+        this.movementVector.x = Math.max(Math.min(this.movementVector.x + 0.35, 5),-2);
+        this.faceDirection = "right";
         this.switchToSprite(this.sprites.right, this.sprite.position.x, this.sprite.position.y);
     } else {
         this.entschleunigen();

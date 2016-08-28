@@ -29,6 +29,11 @@ function init() {
 		.add("blockyFront", "img/blocky/blocky.png")
 		.add("blockyLeft", "img/blocky/blocky_left.png")
 		.add("blockyRight", "img/blocky/blocky_right.png")
+		.add("blockySlideLeft1","img/blocky/blocky_slideleft_1.png")
+		.add("blockySlideLeft2","img/blocky/blocky_slideleft_2.png")
+		.add("blockySlideRight1","img/blocky/blocky_slideright_1.png")
+		.add("blockySlideRight2","img/blocky/blocky_slideright_2.png")
+
         .add("ground", "img/grasstop.png")
 		.load(setup);
 
