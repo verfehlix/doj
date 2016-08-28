@@ -5,18 +5,13 @@ class Player {
         this.stage = stage;
 
         //create sprite from player texture
-        this.sprite = new PIXI.Sprite(PIXI.loader.resources.blockyFront.texture);
-        // center the sprite's anchor point
-        this.sprite.anchor.x = 0.5;
-        this.sprite.anchor.y = 0.5;
-        // set position
-        this.sprite.position.x = x;
-        this.sprite.position.y = y;
-        // set size
-        this.sprite.width = 64;
-        this.sprite.height = 64;
-        // add sprite to stage
-        this.stage.addChild(this.sprite);
+        this.sprites = {
+            front: new PIXI.Sprite(PIXI.loader.resources.blockyFront.texture),
+            left: new PIXI.Sprite(PIXI.loader.resources.blockyLeft.texture),
+            right: new PIXI.Sprite(PIXI.loader.resources.blockyRight.texture),
+        }
+
+        this.switchToSprite(this.sprites.right, x, y);
 
         //movement speed
         this.movementVector = {
@@ -40,6 +35,35 @@ class Player {
                 this.movementVector.y = -10;
             }
         };
+
+    }
+
+    switchToSprite (sprite, x, y) {
+        if(this.sprite !== sprite){
+            if(this.sprite){
+                this.removeSprite();
+            }
+            this.setupSprite(sprite, x, y);
+            this.sprite = sprite;
+        }
+    }
+
+    removeSprite () {
+        this.stage.removeChild(this.sprite);
+    }
+
+    setupSprite (sprite, x, y) {
+        // center the sprite's anchor point
+        sprite.anchor.x = 0.5;
+        sprite.anchor.y = 0.5;
+        // set position
+        sprite.position.x = x;
+        sprite.position.y = y;
+        // set size
+        sprite.width = 64;
+        sprite.height = 64;
+        // add sprite to stage
+        this.stage.addChild(sprite);
 
     }
 
@@ -90,11 +114,21 @@ Player.prototype.update = function(walls) {
 
     if (Key.isDown(Key.LEFT)) {
         this.movementVector.x = Math.max(this.movementVector.x - 0.35, -5);
+        this.switchToSprite(this.sprites.left, this.sprite.position.x, this.sprite.position.y);
     }
     else if (Key.isDown(Key.RIGHT)) {
         this.movementVector.x = Math.min(this.movementVector.x + 0.35, 5);
+        this.switchToSprite(this.sprites.right, this.sprite.position.x, this.sprite.position.y);
     } else {
         this.entschleunigen();
     }
     this.applyMovementVector();
+
+    // if(this.movementVector.x > 0){
+    //     this.switchToSprite(this.sprites.right, this.sprite.position.x, this.sprite.position.y);
+    // }
+    //
+    // if(this.movementVector.x < 0){
+    //     this.switchToSprite(this.sprites.left, this.sprite.position.x, this.sprite.position.y);
+    // }
 };

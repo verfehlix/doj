@@ -27,6 +27,8 @@ function init() {
 	//IMAGE LOADING
 	loader
 		.add("blockyFront", "img/blocky/blocky.png")
+		.add("blockyLeft", "img/blocky/blocky_left.png")
+		.add("blockyRight", "img/blocky/blocky_right.png")
         .add("ground", "img/grasstop.png")
 		.load(setup);
 
