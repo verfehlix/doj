@@ -35,6 +35,10 @@ function init() {
 		.add("blockySlideRight2","img/blocky/blocky_slideright_2.png")
 
         .add("ground", "img/grasstop.png")
+
+		.add('imgassets/blocky/walkleft.json')
+		.add('imgassets/blocky/walkright.json')
+
 		.load(setup);
 
     //HOOK KEYBOARD EVENTS TO KEY.JS

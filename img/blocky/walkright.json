@@ -1,0 +1,36 @@
+{"frames": {
+
+"blocky_walkright_01.png":
+{
+	"frame": {"x":0,"y":0,"w":56,"h":68},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":56,"h":68},
+	"sourceSize": {"w":56,"h":68}
+},
+"blocky_walkright_02.png":
+{
+	"frame": {"x":0,"y":68,"w":52,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":52,"h":64},
+	"sourceSize": {"w":52,"h":64}
+},
+"blocky_walkright_03.png":
+{
+	"frame": {"x":0,"y":132,"w":52,"h":68},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":52,"h":68},
+	"sourceSize": {"w":52,"h":68}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "walkright.png",
+	"format": "RGBA8888",
+	"size": {"w":56,"h":200},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:015ea21198453474390df70b78474af2:81897077bf3103dba235d5aeefb59225:edd26dc07f56d250f2ac5cee280489a4$"
+}
+}
