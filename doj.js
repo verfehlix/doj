@@ -36,8 +36,8 @@ function init() {
 
         .add("ground", "img/grasstop.png")
 
-		.add('imgassets/blocky/walkleft.json')
-		.add('imgassets/blocky/walkright.json')
+		.add('img/blocky/walkleft.json')
+		.add('img/blocky/walkright.json')
 
 		.load(setup);
 
