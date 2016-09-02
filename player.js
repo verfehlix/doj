@@ -47,24 +47,25 @@ class Player {
                 this.isDashing = true;
                 switch (this.faceDirection)  {
                     case "left" :
-                        this.movementVector.x = -20;
+                        this.movementVector.x = -35;
                         this.movementVector.y = 0;
                         break;
                     case "right":
-                        this.movementVector.x = +20;
+                        this.movementVector.x = +35;
                         this.movementVector.y = 0;
                         break;
 
                 }
                 var that = this;
-                setTimeout(() => {that.disableDashing()}, 500);
+                setTimeout(() => {that.stopDash()}, 150);
             }
         };
 
     }
 
-    disableDashing () {
+    stopDash () {
         this.isDashing = false;
+        this.movementVector.x = 0;
     }
 
     switchToSprite (sprite, x, y) {
