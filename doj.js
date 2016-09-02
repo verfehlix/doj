@@ -33,6 +33,8 @@ function init() {
 		.add("blockySlideLeft2","img/blocky/blocky_slideleft_2.png")
 		.add("blockySlideRight1","img/blocky/blocky_slideright_1.png")
 		.add("blockySlideRight2","img/blocky/blocky_slideright_2.png")
+		.add("blockyJumpLeft","img/blocky/jumpleft.png")
+		.add("blockyJumpRight","img/blocky/jumpright.png")
 
         .add("ground", "img/grasstop.png")
 
