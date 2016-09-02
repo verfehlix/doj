@@ -1,10 +1,8 @@
 class Player {
     constructor(stage, x, y) {
 
-        //add stage
         this.stage = stage;
 
-        //create sprite from player texture
         this.sprites = {
             front: new PIXI.Sprite(PIXI.loader.resources.blockyFront.texture),
             left: new PIXI.Sprite(PIXI.loader.resources.blockyLeft.texture),
@@ -21,7 +19,6 @@ class Player {
 
         this.switchToSprite(this.sprites.right, x, y);
 
-        //movement speed
         this.movementVector = {
             x: 0,
             y: 0
@@ -31,11 +28,11 @@ class Player {
         this.contactGroundEvent = false;
         this.isInAir = true;
         this.hasDoubleJumped = false;
+        this.isDashing = false;
 
         var up = keyboard(38);
         up.press = () => {
             if(!this.isInAir){
-                console.log(10);
                 this.movementVector.y = -10;
             }
             if(this.isInAir && !this.hasDoubleJumped){
@@ -44,6 +41,30 @@ class Player {
             }
         };
 
+        var space = keyboard(32);
+        space.press = () => {
+            if(!this.isDashing){
+                this.isDashing = true;
+                switch (this.faceDirection)  {
+                    case "left" :
+                        this.movementVector.x = -20;
+                        this.movementVector.y = 0;
+                        break;
+                    case "right":
+                        this.movementVector.x = +20;
+                        this.movementVector.y = 0;
+                        break;
+
+                }
+                var that = this;
+                setTimeout(() => {that.disableDashing()}, 500);
+            }
+        };
+
+    }
+
+    disableDashing () {
+        this.isDashing = false;
     }
 
     switchToSprite (sprite, x, y) {
@@ -75,33 +96,19 @@ class Player {
     }
 
     setupMovie (baseString, x, y){
-        // create an array of textures from an image path
+
         var frames = [];
 
         for (var i = 1; i <= 3; i++) {
+
             var val = i < 10 ? '0' + i : i;
 
-            // magically works since the spritesheet was loaded with the pixi loader
             frames.push(PIXI.Texture.fromFrame(baseString + val + '.png'));
+
         }
 
-        // create a MovieClip (brings back memories from the days of Flash, right ?)
         var movie = new PIXI.extras.MovieClip(frames);
-
-        /*
-         * A MovieClip inherits all the properties of a PIXI sprite
-         * so you can change its position, its anchor, mask it, etc
-         */
-        //movie.position.set(300);
-        // center the sprite's anchor point
-        movie.anchor.x = 0.5;
-        movie.anchor.y = 0.5;
-        // set position
-        movie.position.x = x;
-        movie.position.y = y;
-        // movie.anchor.set(0.5);
-        movie.animationSpeed = 0.15;
-
+        movie.animationSpeed = 0.15
         movie.play();
 
         return movie;
@@ -163,7 +170,9 @@ Player.prototype.update = function(walls) {
     }
 
     if(!bottomColliding){
-        this.applyGravity();
+        if(!this.isDashing){
+            this.applyGravity();
+        }
         this.contactGroundEvent = false;
         this.isInAir = true;
     } else if(!this.contactGroundEvent){
@@ -174,7 +183,9 @@ Player.prototype.update = function(walls) {
     }
 
     if (Key.isDown(Key.LEFT)) {
-        this.movementVector.x = Math.min(Math.max(this.movementVector.x - 0.35, -5),2);
+        if(!this.isDashing){
+            this.movementVector.x = Math.min(Math.max(this.movementVector.x - 0.35, -5),2);
+        }
         this.faceDirection = "left";
         if(!this.isInAir){
             this.switchToSprite(this.sprites.moveLeft, this.sprite.position.x, this.sprite.position.y);
@@ -183,7 +194,9 @@ Player.prototype.update = function(walls) {
         }
     }
     else if (Key.isDown(Key.RIGHT)) {
-        this.movementVector.x = Math.max(Math.min(this.movementVector.x + 0.35, 5),-2);
+        if(!this.isDashing){
+            this.movementVector.x = Math.max(Math.min(this.movementVector.x + 0.35, 5),-2);
+        }
         this.faceDirection = "right";
         if(!this.isInAir){
             this.switchToSprite(this.sprites.moveRight, this.sprite.position.x, this.sprite.position.y);
@@ -193,13 +206,6 @@ Player.prototype.update = function(walls) {
     } else {
         this.entschleunigen();
     }
-    this.applyMovementVector();
 
-    // if(this.movementVector.x > 0){
-    //     this.switchToSprite(this.sprites.moveRight, this.sprite.position.x, this.sprite.position.y);
-    // }
-    //
-    // if(this.movementVector.x < 0){
-    //     this.switchToSprite(this.sprites.moveLeft, this.sprite.position.x, this.sprite.position.y);
-    // }
+    this.applyMovementVector();
 };
