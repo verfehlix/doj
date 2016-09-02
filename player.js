@@ -9,11 +9,14 @@ class Player {
             front: new PIXI.Sprite(PIXI.loader.resources.blockyFront.texture),
             left: new PIXI.Sprite(PIXI.loader.resources.blockyLeft.texture),
             right: new PIXI.Sprite(PIXI.loader.resources.blockyRight.texture),
+            jumpLeft: new PIXI.Sprite(PIXI.loader.resources.blockyJumpLeft.texture),
+            jumpRight: new PIXI.Sprite(PIXI.loader.resources.blockyJumpRight.texture),
             slideLeft1: new PIXI.Sprite(PIXI.loader.resources.blockySlideLeft1.texture),
             slideLeft2: new PIXI.Sprite(PIXI.loader.resources.blockySlideLeft2.texture),
             slideRight1: new PIXI.Sprite(PIXI.loader.resources.blockySlideRight1.texture),
             slideRight2: new PIXI.Sprite(PIXI.loader.resources.blockySlideRight2.texture),
-
+            moveLeft: this.setupMovie('blocky_walkleft_', x, y),
+            moveRight: this.setupMovie('blocky_walkright_', x, y)
         }
 
         this.switchToSprite(this.sprites.right, x, y);
@@ -30,7 +33,6 @@ class Player {
         this.hasDoubleJumped = false;
 
         var up = keyboard(38);
-
         up.press = () => {
             if(!this.isInAir){
                 console.log(10);
@@ -66,11 +68,43 @@ class Player {
         sprite.position.x = x;
         sprite.position.y = y;
         // set size
-        sprite.width = 64;
-        sprite.height = 64;
+        //sprite.width = 64;
+        //sprite.height = 64;
         // add sprite to stage
         this.stage.addChild(sprite);
+    }
 
+    setupMovie (baseString, x, y){
+        // create an array of textures from an image path
+        var frames = [];
+
+        for (var i = 1; i <= 3; i++) {
+            var val = i < 10 ? '0' + i : i;
+
+            // magically works since the spritesheet was loaded with the pixi loader
+            frames.push(PIXI.Texture.fromFrame(baseString + val + '.png'));
+        }
+
+        // create a MovieClip (brings back memories from the days of Flash, right ?)
+        var movie = new PIXI.extras.MovieClip(frames);
+
+        /*
+         * A MovieClip inherits all the properties of a PIXI sprite
+         * so you can change its position, its anchor, mask it, etc
+         */
+        //movie.position.set(300);
+        // center the sprite's anchor point
+        movie.anchor.x = 0.5;
+        movie.anchor.y = 0.5;
+        // set position
+        movie.position.x = x;
+        movie.position.y = y;
+        // movie.anchor.set(0.5);
+        movie.animationSpeed = 0.15;
+
+        movie.play();
+
+        return movie;
     }
 
     applyMovementVector() {
@@ -142,22 +176,30 @@ Player.prototype.update = function(walls) {
     if (Key.isDown(Key.LEFT)) {
         this.movementVector.x = Math.min(Math.max(this.movementVector.x - 0.35, -5),2);
         this.faceDirection = "left";
-        this.switchToSprite(this.sprites.left, this.sprite.position.x, this.sprite.position.y);
+        if(!this.isInAir){
+            this.switchToSprite(this.sprites.moveLeft, this.sprite.position.x, this.sprite.position.y);
+        } else {
+            this.switchToSprite(this.sprites.jumpLeft, this.sprite.position.x, this.sprite.position.y);
+        }
     }
     else if (Key.isDown(Key.RIGHT)) {
         this.movementVector.x = Math.max(Math.min(this.movementVector.x + 0.35, 5),-2);
         this.faceDirection = "right";
-        this.switchToSprite(this.sprites.right, this.sprite.position.x, this.sprite.position.y);
+        if(!this.isInAir){
+            this.switchToSprite(this.sprites.moveRight, this.sprite.position.x, this.sprite.position.y);
+        } else {
+            this.switchToSprite(this.sprites.jumpRight, this.sprite.position.x, this.sprite.position.y);
+        }
     } else {
         this.entschleunigen();
     }
     this.applyMovementVector();
 
     // if(this.movementVector.x > 0){
-    //     this.switchToSprite(this.sprites.right, this.sprite.position.x, this.sprite.position.y);
+    //     this.switchToSprite(this.sprites.moveRight, this.sprite.position.x, this.sprite.position.y);
     // }
     //
     // if(this.movementVector.x < 0){
-    //     this.switchToSprite(this.sprites.left, this.sprite.position.x, this.sprite.position.y);
+    //     this.switchToSprite(this.sprites.moveLeft, this.sprite.position.x, this.sprite.position.y);
     // }
 };
