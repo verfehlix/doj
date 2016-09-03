@@ -62,14 +62,53 @@ function init() {
 
         player = new Player(stage, center.x, center.y);
 
-		gameLoop();
+		startAnimating(60);
 	};
+
+	// initialize the timer variables and start the animation
+	var stop = false;
+	var frameCount = 0;
+	var fps, fpsInterval, startTime, now, then, elapsed;
+
+	function startAnimating(fps) {
+	    fpsInterval = 1000 / fps;
+	    then = Date.now();
+	    startTime = then;
+	    animate();
+	}
+
+	// the animation loop calculates time elapsed since the last loop
+// and only draws if your specified fps interval is achieved
+
+	function animate() {
+
+	    // request another frame
+
+	    requestAnimationFrame(animate);
+
+	    // calc elapsed time since last loop
+
+	    now = Date.now();
+	    elapsed = now - then;
+
+	    // if enough time has elapsed, draw the next frame
+
+	    if (elapsed > fpsInterval) {
+
+	        // Get ready for next frame by setting then=now, but also adjust for your
+	        // specified fpsInterval not being a multiple of RAF's interval (16.7ms)
+	        then = now - (elapsed % fpsInterval);
+
+	        gameLoop();
+
+	    }
+	}
 
 	//GAME LOOP
 	function gameLoop() {
 
 		//Loop this function at 60 frames per second
-		requestAnimationFrame(gameLoop);
+		// requestAnimationFrame(gameLoop);
 
         player.update(walls);
 
