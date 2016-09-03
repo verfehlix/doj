@@ -32,8 +32,8 @@ class Player {
             slideLeft2: new PIXI.Sprite(PIXI.loader.resources.blockySlideLeft2.texture),
             slideRight1: new PIXI.Sprite(PIXI.loader.resources.blockySlideRight1.texture),
             slideRight2: new PIXI.Sprite(PIXI.loader.resources.blockySlideRight2.texture),
-            moveLeft: this.setupMovie('blocky_walkleft_', x, y),
-            moveRight: this.setupMovie('blocky_walkright_', x, y)
+            moveLeft: this.setupMovie('walkleft_', x, y),
+            moveRight: this.setupMovie('walkright_', x, y)
         }
 
         this.switchToSprite(this.sprites.right, x, y);
@@ -45,13 +45,16 @@ class Player {
         this.isInAir = true;
         this.hasDoubleJumped = false;
         this.isDashing = false;
+        this.isOnWall = false;
 
         var up = keyboard(38);
         up.press = () => {
+            if(this.isOnWall){
+                this.movementVector.y = -15;
+            }
             if(!this.isInAir){
                 this.movementVector.y = -10;
-            }
-            if(this.isInAir && !this.hasDoubleJumped){
+            } else if (this.isInAir && !this.hasDoubleJumped){
                 this.hasDoubleJumped = true;
                 this.movementVector.y = -10;
             }
@@ -171,11 +174,13 @@ class Player {
     }
 }
 
-Player.prototype.update = function(walls, delta) {
+Player.prototype.update = function(grounds, walls, delta) {
 
     this.movementVector.timeDelta = delta;
     //check collision before moving
     var bottomColliding = false;
+    var sideColliding = false;
+
     var bottomBoundingBox = {
         x: this.sprite.x - this.sprite.width/2,
         y: this.sprite.y + this.sprite.height/2 -10,
@@ -183,13 +188,39 @@ Player.prototype.update = function(walls, delta) {
         height: 10
     };
 
-    this.graphics.clear();
-    this.graphics.beginFill(0xf200ff);
-    this.graphics.drawRect(bottomBoundingBox.x, bottomBoundingBox.y, bottomBoundingBox.width, bottomBoundingBox.height);
+    var rightBoundingBox = {
+        x: this.sprite.x + this.sprite.width / 2 - 12,
+        y: this.sprite.y - this.sprite.height / 2,
+        width: 10,
+        height: this.sprite.height
+    };
+
+    var leftBoundingBox = {
+        x: this.sprite.x - this.sprite.width / 2 + 2,
+        y: this.sprite.y - this.sprite.height / 2,
+        width: 10,
+        height: this.sprite.height
+    };
+
+    var debug = false;
+
+    if(debug){
+        this.graphics.clear();
+        this.graphics.beginFill(0xf200ff);
+        this.graphics.drawRect(rightBoundingBox.x, rightBoundingBox.y, rightBoundingBox.width, rightBoundingBox.height);
+        this.graphics.drawRect(leftBoundingBox.x, leftBoundingBox.y, leftBoundingBox.width, leftBoundingBox.height);
+        this.graphics.drawRect(bottomBoundingBox.x, bottomBoundingBox.y, bottomBoundingBox.width, bottomBoundingBox.height);
+    }
+
+    for (var i = 0; i < grounds.length; i++) {
+        if (collides(bottomBoundingBox, grounds[i])) {
+               bottomColliding = true;
+        }
+    }
 
     for (var i = 0; i < walls.length; i++) {
-        if (collides(bottomBoundingBox, walls[i])) {
-               bottomColliding = true;
+        if (collides(leftBoundingBox, walls[i]) || collides(rightBoundingBox, walls[i])) {
+               sideColliding = true;
         }
     }
 
@@ -201,9 +232,22 @@ Player.prototype.update = function(walls, delta) {
         this.isInAir = true;
     } else if(!this.contactGroundEvent){
         this.movementVector.y = 0;
+        this.sprite.position.y = 793;
         this.contactGroundEvent = true;
         this.isInAir = false;
         this.hasDoubleJumped = false;
+    }
+
+    if(sideColliding){
+        this.isOnWall = true;
+        this.movementVector.x = 0;
+        if(this.faceDirection === "left"){
+            this.sprite.position.x = 64 + this.sprite.width / 2 -2;
+        } else if(this.faceDirection === "right"){
+            this.sprite.position.x = 704 - this.sprite.width / 2 +2;
+        }
+    } else {
+        this.isOnWall = false;
     }
 
     if (Key.isDown(Key.LEFT)) {

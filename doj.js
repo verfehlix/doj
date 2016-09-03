@@ -8,7 +8,7 @@ function init() {
         x: width/2,
         y: height/2
     };
-	var bgColor = 0x777AAA;
+	var bgColor = 0x58627a;
 
 	//PIXI JS ALIASES
 	var Container = PIXI.Container,
@@ -39,6 +39,7 @@ function init() {
 		.add('img/blocky/walkright.json')
 
         .add("ground", "img/grasstop.png")
+		.add("wall", "img/wall.png")
 
 		.load(setup);
 
@@ -48,15 +49,28 @@ function init() {
 
     //PLAYER
     var player;
-    var walls = [];
+    var grounds = [];
+	var walls = [];
 
 	//SETUP
 	function setup() {
 
         for (var i = 0; i < 12 * 64; i+=64) {
             var ground = createNewGroundSprite(i,height-64, 64, 64);
-            walls.push(ground);
+            grounds.push(ground);
             stage.addChildAt(ground,0);
+        }
+
+		for (var i = 0; i < 13 * 64; i+=64) {
+            var wall = createNewWallSprite(width-64,i-8, 64, 64);
+            walls.push(wall);
+            stage.addChildAt(wall,0);
+        }
+
+		for (var i = 0; i < 13 * 64; i+=64) {
+            var wall = createNewWallSprite(0,i-8, 64, 64);
+            walls.push(wall);
+            stage.addChildAt(wall,0);
         }
 
         player = new Player(stage, center.x, center.y);
@@ -90,7 +104,7 @@ function init() {
         last = now;
 		//Loop this function at 60 frames per second
 		// requestAnimationFrame(gameLoop);
-        player.update(walls, elapsed / 16); // auf 1 normalisiert, wegen 16.7 ms
+        player.update(grounds, walls, elapsed / 16); // auf 1 normalisiert, wegen 16.7 ms
 
 		//Render the stage to see the animation
 		renderer.render(stage);
@@ -99,6 +113,22 @@ function init() {
     var createNewGroundSprite = function(posX, posY, width, height) {
         // create a new Sprite using the Texture
         var texture = PIXI.loader.resources.ground.texture;
+        var groundSprite = new PIXI.Sprite(texture);
+
+        // set position
+        groundSprite.position.x = posX;
+        groundSprite.position.y = posY;
+
+        // set size
+        groundSprite.width = width;
+        groundSprite.height = height;
+
+        return groundSprite;
+    };
+
+	var createNewWallSprite = function(posX, posY, width, height) {
+        // create a new Sprite using the Texture
+        var texture = PIXI.loader.resources.wall.texture;
         var groundSprite = new PIXI.Sprite(texture);
 
         // set position

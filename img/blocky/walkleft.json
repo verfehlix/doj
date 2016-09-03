@@ -1,6 +1,6 @@
 {"frames": {
 
-"blocky_walkleft_01.png":
+"walkleft_01.png":
 {
 	"frame": {"x":0,"y":0,"w":64,"h":64},
 	"rotated": false,
@@ -8,17 +8,17 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
-"blocky_walkleft_02.png":
+"walkleft_02.png":
 {
-	"frame": {"x":0,"y":64,"w":64,"h":64},
+	"frame": {"x":64,"y":0,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
-"blocky_walkleft_03.png":
+"walkleft_03.png":
 {
-	"frame": {"x":0,"y":132,"w":64,"h":64},
+	"frame": {"x":128,"y":0,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
@@ -29,8 +29,8 @@
 	"version": "1.0",
 	"image": "walkleft.png",
 	"format": "RGBA8888",
-	"size": {"w":64,"h":200},
+	"size": {"w":192,"h":64},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:a9f46f3e522af132080168415bfa289f:e90482c9bc99b5c535a12da4b73d4397:22fa426ab325c5e6bc0349bff8e9ff08$"
+	"smartupdate": "$TexturePacker:SmartUpdate:2286a2d700e0721fa36d69b4bb8feb5d:2770932fbd41923f53b701a4f5bbbaf9:22fa426ab325c5e6bc0349bff8e9ff08$"
 }
 }
