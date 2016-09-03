@@ -62,7 +62,7 @@ function init() {
 
         player = new Player(stage, center.x, center.y);
 
-		startAnimating(60);
+		startAnimating(120);
 	};
 
 	// initialize the timer variables and start the animation
