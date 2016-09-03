@@ -3,6 +3,9 @@ class Player {
 
         this.stage = stage;
 
+        this.graphics = new PIXI.Graphics();
+        this.stage.addChildAt(this.graphics, 11);
+
         this.sprites = {
             front: new PIXI.Sprite(PIXI.loader.resources.blockyFront.texture),
             left: new PIXI.Sprite(PIXI.loader.resources.blockyLeft.texture),
@@ -93,7 +96,7 @@ class Player {
         //sprite.width = 64;
         //sprite.height = 64;
         // add sprite to stage
-        this.stage.addChild(sprite);
+        this.stage.addChildAt(sprite,10);
     }
 
     setupMovie (baseString, x, y){
@@ -159,11 +162,16 @@ Player.prototype.update = function(walls) {
     //check collision before moving
     var bottomColliding = false;
     var bottomBoundingBox = {
-        x: this.sprite.x,
-        y: this.sprite.y,
+        x: this.sprite.x - this.sprite.width/2,
+        y: this.sprite.y + this.sprite.height/2 -10,
         width: this.sprite.width,
-        height: this.sprite.height/2
+        height: 10
     };
+
+    this.graphics.clear();
+    this.graphics.beginFill(0xf200ff);
+    this.graphics.drawRect(bottomBoundingBox.x, bottomBoundingBox.y, bottomBoundingBox.width, bottomBoundingBox.height);
+
     for (var i = 0; i < walls.length; i++) {
         if (collides(bottomBoundingBox, walls[i])) {
                bottomColliding = true;
@@ -209,4 +217,6 @@ Player.prototype.update = function(walls) {
     }
 
     this.applyMovementVector();
+
+
 };
