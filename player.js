@@ -1,3 +1,19 @@
+class MovementVector {
+    constructor(){
+        this.x=0;
+        this.y=0;
+        this.timeDelta = 1;
+    }
+    deltaX(val){
+        this.x += val * this.timeDelta
+        return this.x
+    }
+    deltaY(val){
+        this.y += val * this.timeDelta
+        return this.y
+    }
+}
+
 class Player {
     constructor(stage, x, y) {
 
@@ -22,10 +38,7 @@ class Player {
 
         this.switchToSprite(this.sprites.right, x, y);
 
-        this.movementVector = {
-            x: 0,
-            y: 0
-        };
+        this.movementVector = new MovementVector();
 
         this.faceDirection = "right";
         this.contactGroundEvent = false;
@@ -118,18 +131,18 @@ class Player {
         return movie;
     }
 
-    applyMovementVector() {
-        this.sprite.position.x += this.movementVector.x;
-        this.sprite.position.y += this.movementVector.y;
+    applyMovementVector(delta) {
+        this.sprite.position.x += (this.movementVector.x * delta);
+        this.sprite.position.y += (this.movementVector.y * delta);
     }
 
     applyGravity() {
-        this.movementVector.y = Math.min(this.movementVector.y + 0.5, 10);
+        this.movementVector.y = Math.min(this.movementVector.deltaY(0.5), 10);
     }
 
     entschleunigen() {
         if(this.movementVector.x > 0){
-            this.movementVector.x = Math.max(this.movementVector.x - 0.25, 0);
+            this.movementVector.x = Math.max(this.movementVector.deltaX(-0.25), 0);
             if(!this.isInAir){
                 if(Math.abs(this.movementVector.x) > 3.95){
                     this.switchToSprite(this.sprites.slideRight1, this.sprite.position.x, this.sprite.position.y);
@@ -138,7 +151,7 @@ class Player {
                 }
             }
         } else if(this.movementVector.x < 0){
-            this.movementVector.x = Math.min(this.movementVector.x + 0.25, 0);
+            this.movementVector.x = Math.min(this.movementVector.deltaX(+0.35), 0);
             if(!this.isInAir){
                 if(Math.abs(this.movementVector.x) > 3.95){
                     this.switchToSprite(this.sprites.slideLeft1, this.sprite.position.x, this.sprite.position.y);
@@ -158,7 +171,9 @@ class Player {
     }
 }
 
-Player.prototype.update = function(walls) {
+Player.prototype.update = function(walls, delta) {
+
+    this.movementVector.timeDelta = delta;
     //check collision before moving
     var bottomColliding = false;
     var bottomBoundingBox = {
@@ -180,7 +195,7 @@ Player.prototype.update = function(walls) {
 
     if(!bottomColliding){
         if(!this.isDashing){
-            this.applyGravity();
+            this.applyGravity(delta);
         }
         this.contactGroundEvent = false;
         this.isInAir = true;
@@ -193,7 +208,7 @@ Player.prototype.update = function(walls) {
 
     if (Key.isDown(Key.LEFT)) {
         if(!this.isDashing){
-            this.movementVector.x = Math.min(Math.max(this.movementVector.x - 0.35, -5),2);
+            this.movementVector.x = Math.min(Math.max(this.movementVector.deltaX(-0.35), -5),2);
         }
         this.faceDirection = "left";
         if(!this.isInAir){
@@ -204,7 +219,7 @@ Player.prototype.update = function(walls) {
     }
     else if (Key.isDown(Key.RIGHT)) {
         if(!this.isDashing){
-            this.movementVector.x = Math.max(Math.min(this.movementVector.x + 0.35, 5),-2);
+            this.movementVector.x = Math.max(Math.min(this.movementVector.deltaX(+0.35), 5),-2);
         }
         this.faceDirection = "right";
         if(!this.isInAir){
@@ -216,7 +231,7 @@ Player.prototype.update = function(walls) {
         this.entschleunigen();
     }
 
-    this.applyMovementVector();
+    this.applyMovementVector(delta);
 
 
 };
