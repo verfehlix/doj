@@ -278,7 +278,6 @@ Player.prototype.update = function(grounds, walls, delta) {
 
     if (Key.isDown(Key.LEFT)) {
         if(!this.isDashing & !this.isWallJumping){
-        // if(!this.isDashing){
             this.movementVector.x = Math.min(Math.max(this.movementVector.deltaX(-0.35), -5),2);
             this.faceDirection = "left";
         }
@@ -290,7 +289,6 @@ Player.prototype.update = function(grounds, walls, delta) {
     }
     else if (Key.isDown(Key.RIGHT)) {
         if(!this.isDashing & !this.isWallJumping){
-        // if(!this.isDashing){
             this.movementVector.x = Math.max(Math.min(this.movementVector.deltaX(+0.35), 5),-2);
             this.faceDirection = "right";
         }
