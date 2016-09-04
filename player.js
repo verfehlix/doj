@@ -56,8 +56,12 @@ class Player {
                 this.movementVector.y = -15;
                 if(this.faceDirection === "left"){
                     this.movementVector.x = 8;
+                    this.faceDirection = "right";
+                    this.switchToSprite(this.sprites.jumpRight, this.sprite.position.x, this.sprite.position.y);
                 } else if(this.faceDirection === "right"){
                     this.movementVector.x = -8;
+                    this.faceDirection = "left";
+                    this.switchToSprite(this.sprites.jumpLeft, this.sprite.position.x, this.sprite.position.y);
                 }
                 var that = this;
                 setTimeout(() => {that.stopWalljump()}, 350);
@@ -274,25 +278,23 @@ Player.prototype.update = function(grounds, walls, delta) {
 
     if (Key.isDown(Key.LEFT)) {
         if(!this.isDashing & !this.isWallJumping){
-        // if(!this.isDashing){
             this.movementVector.x = Math.min(Math.max(this.movementVector.deltaX(-0.35), -5),2);
+            this.faceDirection = "left";
         }
-        this.faceDirection = "left";
         if(!this.isInAir){
             this.switchToSprite(this.sprites.moveLeft, this.sprite.position.x, this.sprite.position.y);
-        } else {
+        } else if(!this.isWallJumping){
             this.switchToSprite(this.sprites.jumpLeft, this.sprite.position.x, this.sprite.position.y);
         }
     }
     else if (Key.isDown(Key.RIGHT)) {
         if(!this.isDashing & !this.isWallJumping){
-        // if(!this.isDashing){
             this.movementVector.x = Math.max(Math.min(this.movementVector.deltaX(+0.35), 5),-2);
+            this.faceDirection = "right";
         }
-        this.faceDirection = "right";
         if(!this.isInAir){
             this.switchToSprite(this.sprites.moveRight, this.sprite.position.x, this.sprite.position.y);
-        } else {
+        } else if(!this.isWallJumping){
             this.switchToSprite(this.sprites.jumpRight, this.sprite.position.x, this.sprite.position.y);
         }
     } else {
