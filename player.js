@@ -50,21 +50,17 @@ class Player {
 
         var up = keyboard(38);
         up.press = () => {
-            if(this.isOnWall && !this.hasWallJumped){
+            if(this.isOnWall && !this.hasWallJumped && this.isInAir){
                 this.hasWallJumped = true;
-                this.movementVector.y = -20;
-                if(this.faceDirection === "right"){
-                    // this.sprite.position.x
-                    this.movementVector.x = -20;
-                } else if(this.faceDirection === "left"){
-                    this.movementVector.x = 20;
-                }
-            }
-            if(!this.isInAir){
-                this.movementVector.y = -10;
+                this.movementVector.y = -15;
+                console.log("Wall Jump!");
             } else if (this.isInAir && !this.hasDoubleJumped){
                 this.hasDoubleJumped = true;
                 this.movementVector.y = -10;
+                console.log("Double Jump!");
+            } else if(!this.isInAir){
+                this.movementVector.y = -10;
+                console.log("Jump!");
             }
         };
 
@@ -249,6 +245,7 @@ Player.prototype.update = function(grounds, walls, delta) {
         this.isInAir = false;
         this.hasDoubleJumped = false;
         this.hasWallJumped = false;
+        console.clear();
     }
 
     if(leftColliding){
