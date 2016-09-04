@@ -46,11 +46,19 @@ class Player {
         this.hasDoubleJumped = false;
         this.isDashing = false;
         this.isOnWall = false;
+        this.hasWallJumped = false;
 
         var up = keyboard(38);
         up.press = () => {
-            if(this.isOnWall){
-                this.movementVector.y = -15;
+            if(this.isOnWall && !this.hasWallJumped){
+                this.hasWallJumped = true;
+                this.movementVector.y = -20;
+                if(this.faceDirection === "right"){
+                    // this.sprite.position.x
+                    this.movementVector.x = -20;
+                } else if(this.faceDirection === "left"){
+                    this.movementVector.x = 20;
+                }
             }
             if(!this.isInAir){
                 this.movementVector.y = -10;
@@ -179,7 +187,8 @@ Player.prototype.update = function(grounds, walls, delta) {
     this.movementVector.timeDelta = delta;
     //check collision before moving
     var bottomColliding = false;
-    var sideColliding = false;
+    var leftColliding = false;
+    var rightColliding = false;
 
     var bottomBoundingBox = {
         x: this.sprite.x - this.sprite.width/2,
@@ -219,8 +228,11 @@ Player.prototype.update = function(grounds, walls, delta) {
     }
 
     for (var i = 0; i < walls.length; i++) {
-        if (collides(leftBoundingBox, walls[i]) || collides(rightBoundingBox, walls[i])) {
-               sideColliding = true;
+        if (collides(leftBoundingBox, walls[i])) {
+               leftColliding = true;
+        }
+        if (collides(rightBoundingBox, walls[i])) {
+            rightColliding = true;
         }
     }
 
@@ -236,16 +248,17 @@ Player.prototype.update = function(grounds, walls, delta) {
         this.contactGroundEvent = true;
         this.isInAir = false;
         this.hasDoubleJumped = false;
+        this.hasWallJumped = false;
     }
 
-    if(sideColliding){
+    if(leftColliding){
         this.isOnWall = true;
         this.movementVector.x = 0;
-        if(this.faceDirection === "left"){
-            this.sprite.position.x = 64 + this.sprite.width / 2 -2;
-        } else if(this.faceDirection === "right"){
-            this.sprite.position.x = 704 - this.sprite.width / 2 +2;
-        }
+        this.sprite.position.x = 64 + this.sprite.width / 2 -2;
+    } else if (rightColliding){
+        this.isOnWall = true;
+        this.movementVector.x = 0;
+        this.sprite.position.x = 704 - this.sprite.width / 2 +2;
     } else {
         this.isOnWall = false;
     }
