@@ -50,20 +50,21 @@ class Player {
 
         var up = keyboard(38);
         up.press = () => {
-            if(this.isOnWall && !this.hasWallJumped){
+            if(this.isOnWall && !this.hasWallJumped && this.isInAir){
+                this.isWallJumping = true;
                 this.hasWallJumped = true;
-                this.movementVector.y = -20;
-                if(this.faceDirection === "right"){
-                    // this.sprite.position.x
-                    this.movementVector.x = -20;
-                } else if(this.faceDirection === "left"){
-                    this.movementVector.x = 20;
+                this.movementVector.y = -15;
+                if(this.faceDirection === "left"){
+                    this.movementVector.x = 8;
+                } else if(this.faceDirection === "right"){
+                    this.movementVector.x = -8;
                 }
-            }
-            if(!this.isInAir){
-                this.movementVector.y = -10;
+                var that = this;
+                setTimeout(() => {that.stopWalljump()}, 350);
             } else if (this.isInAir && !this.hasDoubleJumped){
                 this.hasDoubleJumped = true;
+                this.movementVector.y = -10;
+            } else if(!this.isInAir){
                 this.movementVector.y = -10;
             }
         };
@@ -93,6 +94,10 @@ class Player {
     stopDash () {
         this.isDashing = false;
         this.movementVector.x = 0;
+    }
+
+    stopWalljump () {
+        this.isWallJumping = false;
     }
 
     switchToSprite (sprite, x, y) {
@@ -253,18 +258,23 @@ Player.prototype.update = function(grounds, walls, delta) {
 
     if(leftColliding){
         this.isOnWall = true;
-        this.movementVector.x = 0;
+        if(!this.isWallJumping){
+            this.movementVector.x = 0;
+        }
         this.sprite.position.x = 64 + this.sprite.width / 2 -2;
     } else if (rightColliding){
         this.isOnWall = true;
-        this.movementVector.x = 0;
+        if(!this.isWallJumping){
+            this.movementVector.x = 0;
+        }
         this.sprite.position.x = 704 - this.sprite.width / 2 +2;
     } else {
         this.isOnWall = false;
     }
 
     if (Key.isDown(Key.LEFT)) {
-        if(!this.isDashing){
+        if(!this.isDashing & !this.isWallJumping){
+        // if(!this.isDashing){
             this.movementVector.x = Math.min(Math.max(this.movementVector.deltaX(-0.35), -5),2);
         }
         this.faceDirection = "left";
@@ -275,7 +285,8 @@ Player.prototype.update = function(grounds, walls, delta) {
         }
     }
     else if (Key.isDown(Key.RIGHT)) {
-        if(!this.isDashing){
+        if(!this.isDashing & !this.isWallJumping){
+        // if(!this.isDashing){
             this.movementVector.x = Math.max(Math.min(this.movementVector.deltaX(+0.35), 5),-2);
         }
         this.faceDirection = "right";
