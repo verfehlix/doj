@@ -1,7 +1,26 @@
+class MovementVector {
+    constructor(){
+        this.x=0;
+        this.y=0;
+        this.timeDelta = 1;
+    }
+    deltaX(val){
+        this.x += val * this.timeDelta
+        return this.x
+    }
+    deltaY(val){
+        this.y += val * this.timeDelta
+        return this.y
+    }
+}
+
 class Player {
     constructor(stage, x, y) {
 
         this.stage = stage;
+
+        this.graphics = new PIXI.Graphics();
+        this.stage.addChildAt(this.graphics, 11);
 
         this.sprites = {
             front: new PIXI.Sprite(PIXI.loader.resources.blockyFront.texture),
@@ -13,29 +32,37 @@ class Player {
             slideLeft2: new PIXI.Sprite(PIXI.loader.resources.blockySlideLeft2.texture),
             slideRight1: new PIXI.Sprite(PIXI.loader.resources.blockySlideRight1.texture),
             slideRight2: new PIXI.Sprite(PIXI.loader.resources.blockySlideRight2.texture),
-            moveLeft: this.setupMovie('blocky_walkleft_', x, y),
-            moveRight: this.setupMovie('blocky_walkright_', x, y)
+            moveLeft: this.setupMovie('walkleft_', x, y),
+            moveRight: this.setupMovie('walkright_', x, y)
         }
 
         this.switchToSprite(this.sprites.right, x, y);
 
-        this.movementVector = {
-            x: 0,
-            y: 0
-        };
+        this.movementVector = new MovementVector();
 
         this.faceDirection = "right";
         this.contactGroundEvent = false;
         this.isInAir = true;
         this.hasDoubleJumped = false;
         this.isDashing = false;
+        this.isOnWall = false;
+        this.hasWallJumped = false;
 
         var up = keyboard(38);
         up.press = () => {
+            if(this.isOnWall && !this.hasWallJumped){
+                this.hasWallJumped = true;
+                this.movementVector.y = -20;
+                if(this.faceDirection === "right"){
+                    // this.sprite.position.x
+                    this.movementVector.x = -20;
+                } else if(this.faceDirection === "left"){
+                    this.movementVector.x = 20;
+                }
+            }
             if(!this.isInAir){
                 this.movementVector.y = -10;
-            }
-            if(this.isInAir && !this.hasDoubleJumped){
+            } else if (this.isInAir && !this.hasDoubleJumped){
                 this.hasDoubleJumped = true;
                 this.movementVector.y = -10;
             }
@@ -93,7 +120,7 @@ class Player {
         //sprite.width = 64;
         //sprite.height = 64;
         // add sprite to stage
-        this.stage.addChild(sprite);
+        this.stage.addChildAt(sprite,10);
     }
 
     setupMovie (baseString, x, y){
@@ -115,18 +142,18 @@ class Player {
         return movie;
     }
 
-    applyMovementVector() {
-        this.sprite.position.x += this.movementVector.x;
-        this.sprite.position.y += this.movementVector.y;
+    applyMovementVector(delta) {
+        this.sprite.position.x += (this.movementVector.x * delta);
+        this.sprite.position.y += (this.movementVector.y * delta);
     }
 
     applyGravity() {
-        this.movementVector.y = Math.min(this.movementVector.y + 0.5, 10);
+        this.movementVector.y = Math.min(this.movementVector.deltaY(0.5), 10);
     }
 
     entschleunigen() {
         if(this.movementVector.x > 0){
-            this.movementVector.x = Math.max(this.movementVector.x - 0.25, 0);
+            this.movementVector.x = Math.max(this.movementVector.deltaX(-0.25), 0);
             if(!this.isInAir){
                 if(Math.abs(this.movementVector.x) > 3.95){
                     this.switchToSprite(this.sprites.slideRight1, this.sprite.position.x, this.sprite.position.y);
@@ -135,7 +162,7 @@ class Player {
                 }
             }
         } else if(this.movementVector.x < 0){
-            this.movementVector.x = Math.min(this.movementVector.x + 0.25, 0);
+            this.movementVector.x = Math.min(this.movementVector.deltaX(+0.35), 0);
             if(!this.isInAir){
                 if(Math.abs(this.movementVector.x) > 3.95){
                     this.switchToSprite(this.sprites.slideLeft1, this.sprite.position.x, this.sprite.position.y);
@@ -155,37 +182,90 @@ class Player {
     }
 }
 
-Player.prototype.update = function(walls) {
+Player.prototype.update = function(grounds, walls, delta) {
+
+    this.movementVector.timeDelta = delta;
     //check collision before moving
     var bottomColliding = false;
+    var leftColliding = false;
+    var rightColliding = false;
+
     var bottomBoundingBox = {
-        x: this.sprite.x,
-        y: this.sprite.y,
+        x: this.sprite.x - this.sprite.width/2,
+        y: this.sprite.y + this.sprite.height/2 -10,
         width: this.sprite.width,
-        height: this.sprite.height/2
+        height: 10
     };
-    for (var i = 0; i < walls.length; i++) {
-        if (collides(bottomBoundingBox, walls[i])) {
+
+    var rightBoundingBox = {
+        x: this.sprite.x + this.sprite.width / 2 - 12,
+        y: this.sprite.y - this.sprite.height / 2,
+        width: 10,
+        height: this.sprite.height
+    };
+
+    var leftBoundingBox = {
+        x: this.sprite.x - this.sprite.width / 2 + 2,
+        y: this.sprite.y - this.sprite.height / 2,
+        width: 10,
+        height: this.sprite.height
+    };
+
+    var debug = false;
+
+    if(debug){
+        this.graphics.clear();
+        this.graphics.beginFill(0xf200ff);
+        this.graphics.drawRect(rightBoundingBox.x, rightBoundingBox.y, rightBoundingBox.width, rightBoundingBox.height);
+        this.graphics.drawRect(leftBoundingBox.x, leftBoundingBox.y, leftBoundingBox.width, leftBoundingBox.height);
+        this.graphics.drawRect(bottomBoundingBox.x, bottomBoundingBox.y, bottomBoundingBox.width, bottomBoundingBox.height);
+    }
+
+    for (var i = 0; i < grounds.length; i++) {
+        if (collides(bottomBoundingBox, grounds[i])) {
                bottomColliding = true;
+        }
+    }
+
+    for (var i = 0; i < walls.length; i++) {
+        if (collides(leftBoundingBox, walls[i])) {
+               leftColliding = true;
+        }
+        if (collides(rightBoundingBox, walls[i])) {
+            rightColliding = true;
         }
     }
 
     if(!bottomColliding){
         if(!this.isDashing){
-            this.applyGravity();
+            this.applyGravity(delta);
         }
         this.contactGroundEvent = false;
         this.isInAir = true;
     } else if(!this.contactGroundEvent){
         this.movementVector.y = 0;
+        this.sprite.position.y = 793;
         this.contactGroundEvent = true;
         this.isInAir = false;
         this.hasDoubleJumped = false;
+        this.hasWallJumped = false;
+    }
+
+    if(leftColliding){
+        this.isOnWall = true;
+        this.movementVector.x = 0;
+        this.sprite.position.x = 64 + this.sprite.width / 2 -2;
+    } else if (rightColliding){
+        this.isOnWall = true;
+        this.movementVector.x = 0;
+        this.sprite.position.x = 704 - this.sprite.width / 2 +2;
+    } else {
+        this.isOnWall = false;
     }
 
     if (Key.isDown(Key.LEFT)) {
         if(!this.isDashing){
-            this.movementVector.x = Math.min(Math.max(this.movementVector.x - 0.35, -5),2);
+            this.movementVector.x = Math.min(Math.max(this.movementVector.deltaX(-0.35), -5),2);
         }
         this.faceDirection = "left";
         if(!this.isInAir){
@@ -196,7 +276,7 @@ Player.prototype.update = function(walls) {
     }
     else if (Key.isDown(Key.RIGHT)) {
         if(!this.isDashing){
-            this.movementVector.x = Math.max(Math.min(this.movementVector.x + 0.35, 5),-2);
+            this.movementVector.x = Math.max(Math.min(this.movementVector.deltaX(+0.35), 5),-2);
         }
         this.faceDirection = "right";
         if(!this.isInAir){
@@ -208,5 +288,7 @@ Player.prototype.update = function(walls) {
         this.entschleunigen();
     }
 
-    this.applyMovementVector();
+    this.applyMovementVector(delta);
+
+
 };

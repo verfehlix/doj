@@ -1,36 +1,36 @@
 {"frames": {
 
-"blocky_walkright_01.png":
+"walkright_01.png":
 {
-	"frame": {"x":0,"y":0,"w":56,"h":68},
+	"frame": {"x":0,"y":0,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":56,"h":68},
-	"sourceSize": {"w":56,"h":68}
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
 },
-"blocky_walkright_02.png":
+"walkright_02.png":
 {
-	"frame": {"x":0,"y":68,"w":52,"h":64},
+	"frame": {"x":64,"y":0,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":52,"h":64},
-	"sourceSize": {"w":52,"h":64}
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
 },
-"blocky_walkright_03.png":
+"walkright_03.png":
 {
-	"frame": {"x":0,"y":132,"w":52,"h":68},
+	"frame": {"x":128,"y":0,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":52,"h":68},
-	"sourceSize": {"w":52,"h":68}
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
 }},
 "meta": {
 	"app": "http://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "walkright.png",
 	"format": "RGBA8888",
-	"size": {"w":56,"h":200},
+	"size": {"w":192,"h":64},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:015ea21198453474390df70b78474af2:81897077bf3103dba235d5aeefb59225:edd26dc07f56d250f2ac5cee280489a4$"
+	"smartupdate": "$TexturePacker:SmartUpdate:4b7125941a037cf3a405801cbd2f1efe:cc5fb9c2505a950bd8fddd4cc282cd70:edd26dc07f56d250f2ac5cee280489a4$"
 }
 }
