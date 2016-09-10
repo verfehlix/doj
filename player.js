@@ -335,7 +335,6 @@ Player.prototype.update = function(grounds, walls, delta) {
     };
 
     var debug = false;
-
     if(debug){
         this.graphics.clear();
         this.graphics.beginFill(0xf200ff);
@@ -376,12 +375,14 @@ Player.prototype.update = function(grounds, walls, delta) {
 
     if(leftColliding){
         this.isOnWall = true;
+        this.isDashing = false;
         if(!this.isWallJumping){
             this.movementVector.x = 0;
         }
         this.sprite.position.x = 64 + this.sprite.width / 2 -2;
     } else if (rightColliding){
         this.isOnWall = true;
+        this.isDashing = false;
         if(!this.isWallJumping){
             this.movementVector.x = 0;
         }
