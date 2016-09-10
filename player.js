@@ -19,8 +19,24 @@ class Player {
 
         this.stage = stage;
 
+        this.enduranceText = new PIXI.Text(
+            "Endurance: " + this.endurance,
+            {
+                font:"20px pixelmix"
+            }
+        );
+
+        this.enduranceText.position.x = 75;
+        this.enduranceText.position.y = 5;
+        this.stage.addChild(this.enduranceText);
+
         this.graphics = new PIXI.Graphics();
         this.stage.addChildAt(this.graphics, 11);
+
+        this.graphics.clear();
+        this.graphics.beginFill(0x73d73d);
+        this.graphics.drawRect(75, 30, 191, 20);
+
 
         this.sprites = {
             front: new PIXI.Sprite(PIXI.loader.resources.blockyFront.texture),
@@ -144,6 +160,8 @@ class Player {
 
         this.movementVector = new MovementVector();
 
+        this.endurance = 100;
+
         this.faceDirection = "right";
         this.contactGroundEvent = false;
         this.isInAir = true;
@@ -179,8 +197,9 @@ class Player {
 
         var space = keyboard(32);
         space.press = () => {
-            if(!this.isDashing){
+            if(!this.isDashing && this.endurance >= 50){
                 this.isDashing = true;
+                this.endurance -= 50;
                 switch (this.faceDirection)  {
                     case "left" :
                         this.leftDashEmitter.emit = true;
@@ -199,6 +218,8 @@ class Player {
             }
         };
 
+        var that = this;
+        setInterval(() => {that.regenerateEndurance()}, 35);
     }
 
     stopDash () {
@@ -206,6 +227,10 @@ class Player {
         this.rightDashEmitter.emit = false;
         this.leftDashEmitter.emit = false;
         this.movementVector.x = 0;
+    }
+
+    regenerateEndurance () {
+        this.endurance = Math.min(100, this.endurance + 1);
     }
 
     stopWalljump () {
@@ -306,6 +331,19 @@ Player.prototype.update = function(grounds, walls, delta) {
 
     this.leftDashEmitter.updateSpawnPos(this.sprite.x, this.sprite.y);
     this.leftDashEmitter.update(delta);
+
+    this.enduranceText.text = "Endurance: " + this.endurance;
+
+    this.graphics.clear();
+    if(this.endurance < 50){
+        this.graphics.beginFill(0xfa0e3f);
+    } else if(this.endurance >= 50 && this.endurance < 100){
+        this.graphics.beginFill(0xe8ad3b);
+    } else if(this.endurance === 100){
+        this.graphics.beginFill(0x73d73d);
+    }
+
+    this.graphics.drawRect(75, 30, this.endurance * 1.91, 20);
 
     this.movementVector.timeDelta = delta;
     //check collision before moving
