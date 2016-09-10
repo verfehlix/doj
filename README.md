@@ -1,6 +1,6 @@
 # doj
 doj all the dings
 
-![doj](https://cloud.githubusercontent.com/assets/7032914/18230890/51461dec-72a9-11e6-920b-9d81c766361c.gif)
+![doj](https://cloud.githubusercontent.com/assets/7032914/18411049/db8f0002-776f-11e6-9ef4-85e89b82ae2c.gif)
 
 
