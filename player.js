@@ -38,6 +38,110 @@ class Player {
 
         this.switchToSprite(this.sprites.right, x, y);
 
+        this.rightDashEmitter = new PIXI.particles.Emitter(
+            this.stage,
+            [PIXI.loader.resources.blockyRight.texture],
+            {
+            	alpha: {
+            		start: 0.5,
+            		end: 0
+            	},
+            	scale: {
+            		start: 1,
+            		end: 1,
+            		minimumScaleMultiplier: 1
+            	},
+            	color: {
+            		start: "#ffffff",
+            		end: "#ffffff"
+            	},
+            	speed: {
+            		start: 0,
+            		end: 0
+            	},
+            	acceleration: {
+            		x: 0,
+            		y: 0
+            	},
+            	startRotation: {
+            		min: 0,
+            		max: 0
+            	},
+            	noRotation: false,
+            	rotationSpeed: {
+            		min: 0,
+            		max: 0
+            	},
+            	lifetime: {
+            		min: 5,
+            		max: 5
+            	},
+            	blendMode: "normal",
+            	frequency:  1,
+            	emitterLifetime: -1,
+            	maxParticles: 100,
+            	pos: {
+            		x: x,
+            		y: y
+            	},
+            	addAtBack: false,
+            	spawnType: "point"
+            }
+        );
+        this.rightDashEmitter.emit = false;
+
+        this.leftDashEmitter = new PIXI.particles.Emitter(
+            this.stage,
+            [PIXI.loader.resources.blockyLeft.texture],
+            {
+                alpha: {
+                    start: 0.5,
+                    end: 0
+                },
+                scale: {
+                    start: 1,
+                    end: 1,
+                    minimumScaleMultiplier: 1
+                },
+                color: {
+                    start: "#ffffff",
+                    end: "#ffffff"
+                },
+                speed: {
+                    start: 0,
+                    end: 0
+                },
+                acceleration: {
+                    x: 0,
+                    y: 0
+                },
+                startRotation: {
+                    min: 0,
+                    max: 0
+                },
+                noRotation: false,
+                rotationSpeed: {
+                    min: 0,
+                    max: 0
+                },
+                lifetime: {
+                    min: 5,
+                    max: 5
+                },
+                blendMode: "normal",
+                frequency:  1,
+                emitterLifetime: -1,
+                maxParticles: 100,
+                pos: {
+                    x: x,
+                    y: y
+                },
+                addAtBack: false,
+                spawnType: "point"
+            }
+        );
+        this.leftDashEmitter.emit = false;
+
         this.movementVector = new MovementVector();
 
         this.faceDirection = "right";
@@ -79,10 +183,12 @@ class Player {
                 this.isDashing = true;
                 switch (this.faceDirection)  {
                     case "left" :
+                        this.leftDashEmitter.emit = true;
                         this.movementVector.x = -35;
                         this.movementVector.y = 0;
                         break;
                     case "right":
+                        this.rightDashEmitter.emit = true;
                         this.movementVector.x = +35;
                         this.movementVector.y = 0;
                         break;
@@ -97,6 +203,8 @@ class Player {
 
     stopDash () {
         this.isDashing = false;
+        this.rightDashEmitter.emit = false;
+        this.leftDashEmitter.emit = false;
         this.movementVector.x = 0;
     }
 
@@ -192,6 +300,12 @@ class Player {
 }
 
 Player.prototype.update = function(grounds, walls, delta) {
+
+    this.rightDashEmitter.updateSpawnPos(this.sprite.x, this.sprite.y);
+    this.rightDashEmitter.update(delta);
+
+    this.leftDashEmitter.updateSpawnPos(this.sprite.x, this.sprite.y);
+    this.leftDashEmitter.update(delta);
 
     this.movementVector.timeDelta = delta;
     //check collision before moving
